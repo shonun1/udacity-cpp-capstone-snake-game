@@ -11,11 +11,11 @@ void Controller::ChangeDirection(Snake &snake, Snake::Direction input,
   return;
 }
 
-void Controller::HandleInput(bool &running, Snake &snake) const {
+void Controller::HandleInput(GameState &state, Snake &snake) const {
   SDL_Event e;
   while (SDL_PollEvent(&e)) {
     if (e.type == SDL_QUIT) {
-      running = false;
+      state = GameState::Terminated;
     } else if (e.type == SDL_KEYDOWN) {
       switch (e.key.keysym.sym) {
         case SDLK_UP:
@@ -36,6 +36,16 @@ void Controller::HandleInput(bool &running, Snake &snake) const {
         case SDLK_RIGHT:
           ChangeDirection(snake, Snake::Direction::kRight,
                           Snake::Direction::kLeft);
+          break;
+
+        case SDLK_ESCAPE:
+          if (state == GameState::Paused) {
+            state = GameState::Running;
+          } else {
+            // TODO: consider game restarting might be implemented in the future
+            state = GameState::Paused;
+          }
+
           break;
       }
     }
