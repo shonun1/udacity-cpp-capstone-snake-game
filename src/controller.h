@@ -1,7 +1,7 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#include "game_state.h"
+#include "game_structures.h"
 #include "snake.h"
 
 class Controller {

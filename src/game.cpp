@@ -60,8 +60,11 @@ void Game::PlaceFood() {
     // Check that the location is not occupied by a snake item before placing
     // food.
     if (!snake.SnakeCell(x, y)) {
-      food.x = x;
-      food.y = y;
+      food.point.x = x;
+      food.point.y = y;
+      int colorIdx = random_color(engine) % Color::COLOR_OPTIONS.size();
+      food.color = Color::COLOR_OPTIONS[colorIdx];
+
       return;
     }
   }
@@ -76,7 +79,7 @@ void Game::Update() {
   int new_y = static_cast<int>(snake.head_y);
 
   // Check if there's food over here
-  if (food.x == new_x && food.y == new_y) {
+  if (food.point.x == new_x && food.point.y == new_y) {
     score++;
     PlaceFood();
     // Grow snake and increase speed.

@@ -5,7 +5,7 @@
 
 #include "SDL.h"
 #include "controller.h"
-#include "game_state.h"
+#include "game_structures.h"
 #include "renderer.h"
 #include "snake.h"
 
@@ -21,12 +21,13 @@ class Game {
   GameState state;
 
   Snake snake;
-  SDL_Point food;
+  Food food;
 
   std::random_device dev;
   std::mt19937 engine;
   std::uniform_int_distribution<int> random_w;
   std::uniform_int_distribution<int> random_h;
+  std::uniform_int_distribution<int> random_color;
 
   int score{0};
 
