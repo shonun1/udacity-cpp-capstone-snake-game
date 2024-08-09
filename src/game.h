@@ -33,6 +33,7 @@ class Game {
 
   void PlaceFood();
   void Update();
+  void WriteScoreToFile();
 };
 
 #endif

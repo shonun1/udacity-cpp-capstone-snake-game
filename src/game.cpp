@@ -1,5 +1,6 @@
 #include "game.h"
 
+#include <fstream>
 #include <iostream>
 
 #include "SDL.h"
@@ -71,7 +72,12 @@ void Game::PlaceFood() {
 }
 
 void Game::Update() {
-  if (state == GameState::Paused || !snake.alive) return;
+  if (state == GameState::Paused) return;
+  if (!snake.alive) {
+    WriteScoreToFile();
+    state = GameState::Terminated;
+    return;
+  }
 
   snake.Update();
 
@@ -86,6 +92,14 @@ void Game::Update() {
     snake.GrowBody();
     snake.speed += 0.02;
   }
+}
+
+void Game::WriteScoreToFile() {
+  std::ofstream scores_file;
+
+  scores_file.open("scores.txt", std::ios_base::app);
+  scores_file << "user" << " " << score << std::endl;
+  scores_file.close();
 }
 
 int Game::GetScore() const { return score; }
