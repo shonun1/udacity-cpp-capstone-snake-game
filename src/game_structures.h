@@ -35,4 +35,12 @@ struct Food {
   Color color;
 };
 
+struct Score {
+  Score(std::string username_, int score_)
+      : username(username_), score(score_) {};
+
+  std::string username;
+  int score;
+};
+
 #endif

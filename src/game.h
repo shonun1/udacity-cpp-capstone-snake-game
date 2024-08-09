@@ -2,12 +2,15 @@
 #define GAME_H
 
 #include <random>
+#include <vector>
 
 #include "SDL.h"
 #include "controller.h"
 #include "game_structures.h"
 #include "renderer.h"
 #include "snake.h"
+
+const std::string SCORES_FILE = "scores.txt";
 
 class Game {
  public:
@@ -19,9 +22,9 @@ class Game {
 
  private:
   GameState state;
-
   Snake snake;
   Food food;
+  std::vector<Score> past_scores;
 
   std::random_device dev;
   std::mt19937 engine;

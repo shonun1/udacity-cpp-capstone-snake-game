@@ -10,6 +10,16 @@ Game::Game(std::size_t grid_width, std::size_t grid_height)
       engine(dev()),
       random_w(0, static_cast<int>(grid_width - 1)),
       random_h(0, static_cast<int>(grid_height - 1)) {
+  std::string username;
+  int past_score;
+  std::ifstream scores_file;
+  scores_file.open(SCORES_FILE);
+
+  while (scores_file >> username >> past_score) {
+    past_scores.emplace_back(username, past_score);
+  }
+
+  scores_file.close();
   PlaceFood();
 }
 
@@ -97,7 +107,7 @@ void Game::Update() {
 void Game::WriteScoreToFile() {
   std::ofstream scores_file;
 
-  scores_file.open("scores.txt", std::ios_base::app);
+  scores_file.open(SCORES_FILE, std::ios_base::app);
   scores_file << "user" << " " << score << std::endl;
   scores_file.close();
 }
