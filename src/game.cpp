@@ -5,15 +5,20 @@
 
 #include "SDL.h"
 
-Game::Game(std::size_t grid_width, std::size_t grid_height)
-    : snake(grid_width, grid_height),
-      engine(dev()),
-      random_w(0, static_cast<int>(grid_width - 1)),
-      random_h(0, static_cast<int>(grid_height - 1)) {
+Game::Game(GameSettings *game_settings)
+    : engine(dev()), settings(game_settings) {
+  GridSize gridSize = game_settings->GetGridSize();
+  snake = std::make_unique<Snake>(gridSize.getWidth(), gridSize.getHeight());
+
+  random_w = std::uniform_int_distribution<int>(
+      0, static_cast<int>(gridSize.getWidth() - 1));
+  random_h = std::uniform_int_distribution<int>(
+      0, static_cast<int>(gridSize.getHeight() - 1));
+
   std::string username;
   int past_score;
   std::ifstream scores_file;
-  scores_file.open(SCORES_FILE);
+  scores_file.open(Score::SCORES_FILE);
 
   while (scores_file >> username >> past_score) {
     past_scores.emplace_back(username, past_score);
@@ -36,9 +41,9 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     frame_start = SDL_GetTicks();
 
     // Input, Update, Render - the main game loop.
-    controller.HandleInput(state, snake);
+    controller.HandleInput(state, *snake);
     Update();
-    renderer.Render(snake, food);
+    renderer.Render(*snake, food);
 
     frame_end = SDL_GetTicks();
 
@@ -70,7 +75,7 @@ void Game::PlaceFood() {
     y = random_h(engine);
     // Check that the location is not occupied by a snake item before placing
     // food.
-    if (!snake.SnakeCell(x, y)) {
+    if (!snake->SnakeCell(x, y)) {
       food.point.x = x;
       food.point.y = y;
       int colorIdx = random_color(engine) % Color::COLOR_OPTIONS.size();
@@ -83,34 +88,34 @@ void Game::PlaceFood() {
 
 void Game::Update() {
   if (state == GameState::Paused) return;
-  if (!snake.alive) {
+  if (!snake->alive) {
     WriteScoreToFile();
     state = GameState::Terminated;
     return;
   }
 
-  snake.Update();
+  snake->Update();
 
-  int new_x = static_cast<int>(snake.head_x);
-  int new_y = static_cast<int>(snake.head_y);
+  int new_x = static_cast<int>(snake->head_x);
+  int new_y = static_cast<int>(snake->head_y);
 
   // Check if there's food over here
   if (food.point.x == new_x && food.point.y == new_y) {
     score++;
     PlaceFood();
     // Grow snake and increase speed.
-    snake.GrowBody();
-    snake.speed += 0.02;
+    snake->GrowBody();
+    snake->speed += 0.02;
   }
 }
 
 void Game::WriteScoreToFile() {
   std::ofstream scores_file;
 
-  scores_file.open(SCORES_FILE, std::ios_base::app);
-  scores_file << "user" << " " << score << std::endl;
+  scores_file.open(Score::SCORES_FILE, std::ios_base::app);
+  scores_file << settings->GetUsername() << " " << score << std::endl;
   scores_file.close();
 }
 
 int Game::GetScore() const { return score; }
-int Game::GetSize() const { return snake.size; }
+int Game::GetSize() const { return snake->size; }

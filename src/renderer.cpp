@@ -4,12 +4,10 @@
 #include <string>
 
 Renderer::Renderer(const std::size_t screen_width,
-                   const std::size_t screen_height,
-                   const std::size_t grid_width, const std::size_t grid_height)
+                   const std::size_t screen_height, GameSettings *game_settings)
     : screen_width(screen_width),
       screen_height(screen_height),
-      grid_width(grid_width),
-      grid_height(grid_height) {
+      settings(game_settings) {
   // Initialize SDL
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
     std::cerr << "SDL could not initialize.\n";
@@ -41,8 +39,9 @@ Renderer::~Renderer() {
 
 void Renderer::Render(Snake const snake, Food const &food) {
   SDL_Rect block;
-  block.w = screen_width / grid_width;
-  block.h = screen_height / grid_height;
+  GridSize gridSize = settings->GetGridSize();
+  block.w = screen_width / gridSize.getWidth();
+  block.h = screen_height / gridSize.getHeight();
 
   // Clear screen
   SDL_SetRenderDrawColor(sdl_renderer, 0x1E, 0x1E, 0x1E, 0xFF);

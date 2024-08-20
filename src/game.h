@@ -10,11 +10,9 @@
 #include "renderer.h"
 #include "snake.h"
 
-const std::string SCORES_FILE = "scores.txt";
-
 class Game {
  public:
-  Game(std::size_t grid_width, std::size_t grid_height);
+  Game(GameSettings *game_settings);
   void Run(Controller const &controller, Renderer &renderer,
            std::size_t target_frame_duration);
   int GetScore() const;
@@ -22,9 +20,10 @@ class Game {
 
  private:
   GameState state;
-  Snake snake;
+  std::unique_ptr<Snake> snake;
   Food food;
   std::vector<Score> past_scores;
+  GameSettings *settings;
 
   std::random_device dev;
   std::mt19937 engine;

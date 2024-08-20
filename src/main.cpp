@@ -2,6 +2,7 @@
 
 #include "controller.h"
 #include "game.h"
+#include "game_structures.h"
 #include "renderer.h"
 
 int main() {
@@ -9,12 +10,12 @@ int main() {
   constexpr std::size_t kMsPerFrame{1000 / kFramesPerSecond};
   constexpr std::size_t kScreenWidth{640};
   constexpr std::size_t kScreenHeight{640};
-  constexpr std::size_t kGridWidth{32};
-  constexpr std::size_t kGridHeight{32};
 
-  Renderer renderer(kScreenWidth, kScreenHeight, kGridWidth, kGridHeight);
+  std::shared_ptr<GameSettings> settings = std::make_shared<GameSettings>();
+  Renderer renderer(kScreenWidth, kScreenHeight, settings.get());
   Controller controller;
-  Game game(kGridWidth, kGridHeight);
+  // TODO: update snake grid size when settings grid size changes
+  Game game(settings.get());
   game.Run(controller, renderer, kMsPerFrame);
   std::cout << "Game has terminated successfully!\n";
   std::cout << "Score: " << game.GetScore() << "\n";
