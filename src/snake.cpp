@@ -40,7 +40,7 @@ void Snake::UpdateHead() {
   }
 
   // Wrap the Snake around to the beginning if going off of the screen.
-  GridSize gridSize = settings->getGridSize();
+  GridSize gridSize = settings->GetGridSize();
   head_x = fmod(head_x + gridSize.GetWidth(), gridSize.GetWidth());
   head_y = fmod(head_y + gridSize.GetHeight(), gridSize.GetHeight());
 }
@@ -67,6 +67,20 @@ void Snake::UpdateBody(SDL_Point &current_head_cell,
 }
 
 void Snake::GrowBody() { growing = true; }
+
+void Snake::GenerateWeapon() {
+  if (weapon == Weapon::Gun) return;
+
+  weapon = static_cast<Weapon>(rand() % 3);
+}
+
+void Snake::AddAmmo(int amount) { ammo += amount; }
+
+void Snake::Shoot() {
+  // TODO: render missile
+  // TODO: change weapon after shooting x ammo with current weapon
+  ammo--;
+}
 
 // Inefficient method to check if cell is occupied by snake.
 bool Snake::SnakeCell(int x, int y) {

@@ -47,6 +47,9 @@ void Controller::HandleInput(GameState &state, Snake &snake) const {
           }
 
           break;
+        case SDLK_SPACE:
+          snake.Shoot();
+          break;
       }
     }
   }

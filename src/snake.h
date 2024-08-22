@@ -9,18 +9,24 @@
 class Snake {
  public:
   enum class Direction { kUp, kDown, kLeft, kRight };
+  enum class Weapon { Gun, FreezingGun, DisorientingGun };
 
   Snake(GameSettings *game_settings) {
     settings = game_settings;
-    GridSize gridSize = settings->getGridSize();
+    GridSize gridSize = settings->GetGridSize();
     head_x = gridSize.GetWidth() / 2;
     head_y = gridSize.GetHeight() / 2;
   }
 
-  void Update();
+  int GetAmmo() const { return ammo; }
+  Weapon GetWeapon() const { return weapon; }
 
+  void Update();
   void GrowBody();
-  void Generate bool SnakeCell(int x, int y);
+  bool SnakeCell(int x, int y);
+  void GenerateWeapon();
+  void AddAmmo(int amount);
+  void Shoot();
 
   Direction direction = Direction::kUp;
 
@@ -36,6 +42,8 @@ class Snake {
   void UpdateBody(SDL_Point &current_cell, SDL_Point &prev_cell);
 
   bool growing{false};
+  Weapon weapon;
+  int ammo{0};
   GameSettings *settings;
 };
 

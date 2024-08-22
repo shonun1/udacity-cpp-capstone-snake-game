@@ -39,7 +39,7 @@ Renderer::~Renderer() {
 
 void Renderer::Render(Snake const snake, Food const &food) {
   SDL_Rect block;
-  GridSize gridSize = settings->getGridSize();
+  GridSize gridSize = settings->GetGridSize();
   block.w = screen_width / gridSize.GetWidth();
   block.h = screen_height / gridSize.GetHeight();
 
@@ -76,8 +76,23 @@ void Renderer::Render(Snake const snake, Food const &food) {
   SDL_RenderPresent(sdl_renderer);
 }
 
-void Renderer::UpdateWindowTitle(int score, int fps) {
-  std::string title{"Snake Score: " + std::to_string(score) +
-                    " FPS: " + std::to_string(fps)};
+void Renderer::UpdateWindowTitle(int score, int fps, Snake &snake) {
+  std::string weapon;
+  switch (snake.GetWeapon()) {
+    case Snake::Weapon::Gun:
+      weapon = "Gun";
+      break;
+
+    case Snake::Weapon::FreezingGun:
+      weapon = "Freezing Gun";
+      break;
+
+    case Snake::Weapon::DisorientingGun:
+      weapon = "Disorienting Gun";
+      break;
+  }
+  std::string title{
+      "Snake Score: " + std::to_string(score) + " FPS: " + std::to_string(fps) +
+      " Snake Weapon: " + weapon + " Ammo: " + std::to_string(snake.GetAmmo())};
   SDL_SetWindowTitle(sdl_window, title.c_str());
 }

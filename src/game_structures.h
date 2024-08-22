@@ -52,9 +52,9 @@ class GridSize {
   GridSize(Options option);
   GridSize(int width_, int height_) : width(width_), height(height_) {};
 
-  GridSize::Options getSize() { return size; }
-  int GetWidth() { return width; }
-  int GetHeight() { return height; }
+  GridSize::Options GetSize() const { return size; }
+  int GetWidth() const { return width; }
+  int GetHeight() const { return height; }
 
   static const std::vector<GridSize> GRID_SIZES;
 
@@ -69,10 +69,10 @@ class GameSettings {
 
   GameSettings();
 
-  std::string getUsername() const { return username; };
-  GridSize getGridSize() const { return gridSize; };
-  void setUsername(std::string newUsername);
-  void setGridSize(GridSize newSize);
+  std::string GetUsername() const { return username; };
+  GridSize GetGridSize() const { return gridSize; };
+  void SetUsername(std::string newUsername);
+  void SetGridSize(GridSize newSize);
 
   static const std::vector<GridSize> GRID_SIZE_OPTIONS;
 

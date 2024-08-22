@@ -39,12 +39,12 @@ GameSettings::GameSettings() {
   SaveToFile();
 }
 
-void GameSettings::setUsername(std::string newUsername) {
+void GameSettings::SetUsername(std::string newUsername) {
   username = newUsername;
   SaveToFile();
 }
 
-void GameSettings::setGridSize(GridSize newSize) {
+void GameSettings::SetGridSize(GridSize newSize) {
   gridSize = newSize;
   SaveToFile();
 }
@@ -53,7 +53,7 @@ void GameSettings::SaveToFile() {
   std::ofstream settings_file;
   settings_file.open(GameSettings::SETTINGS_FILE, std::ios::trunc);
   settings_file << "username" << " " << username << std::endl;
-  settings_file << "gridSize" << " " << static_cast<int>(gridSize.getSize())
+  settings_file << "gridSize" << " " << static_cast<int>(gridSize.GetSize())
                 << std::endl;
 
   settings_file.close();

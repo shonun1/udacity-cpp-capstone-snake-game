@@ -7,7 +7,7 @@
 
 Game::Game(GameSettings *game_settings)
     : engine(dev()), settings(game_settings) {
-  GridSize gridSize = game_settings->getGridSize();
+  GridSize gridSize = game_settings->GetGridSize();
   // TODO: this is probably illegal, shared pointer needs to know about this?
   snake = std::make_unique<Snake>(game_settings);
 
@@ -54,8 +54,9 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     frame_duration = frame_end - frame_start;
 
     // After every second, update the window title.
-    if (frame_end - title_timestamp >= 1000) {
-      renderer.UpdateWindowTitle(score, frame_count);
+    if (frame_end - title_timestamp >= 100) {
+      // TODO: fps updated once every 10 updates
+      renderer.UpdateWindowTitle(score, frame_count * 10, *snake);
       frame_count = 0;
       title_timestamp = frame_end;
     }
@@ -107,6 +108,10 @@ void Game::Update() {
     // Grow snake and increase speed.
     snake->GrowBody();
     snake->speed += 0.02;
+
+    // TODO: add level multiplier
+    snake->AddAmmo(score);
+    snake->GenerateWeapon();
   }
 }
 
@@ -114,7 +119,7 @@ void Game::WriteScoreToFile() {
   std::ofstream scores_file;
 
   scores_file.open(Score::SCORES_FILE, std::ios_base::app);
-  scores_file << settings->getUsername() << " " << score << std::endl;
+  scores_file << settings->GetUsername() << " " << score << std::endl;
   scores_file.close();
 }
 
