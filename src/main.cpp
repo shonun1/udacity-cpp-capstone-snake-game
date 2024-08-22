@@ -12,9 +12,9 @@ int main() {
   constexpr std::size_t kScreenHeight{640};
 
   std::shared_ptr<GameSettings> settings = std::make_shared<GameSettings>();
+  // TODO: should i be passing shared pointers or raw pointers?
   Renderer renderer(kScreenWidth, kScreenHeight, settings.get());
   Controller controller;
-  // TODO: update snake grid size when settings grid size changes
   Game game(settings.get());
   game.Run(controller, renderer, kMsPerFrame);
   std::cout << "Game has terminated successfully!\n";

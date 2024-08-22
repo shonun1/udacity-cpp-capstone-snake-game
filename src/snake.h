@@ -2,22 +2,25 @@
 #define SNAKE_H
 
 #include <vector>
+
 #include "SDL.h"
+#include "game_structures.h"
 
 class Snake {
  public:
   enum class Direction { kUp, kDown, kLeft, kRight };
 
-  Snake(int grid_width, int grid_height)
-      : grid_width(grid_width),
-        grid_height(grid_height),
-        head_x(grid_width / 2),
-        head_y(grid_height / 2) {}
+  Snake(GameSettings *game_settings) {
+    settings = game_settings;
+    GridSize gridSize = settings->getGridSize();
+    head_x = gridSize.GetWidth() / 2;
+    head_y = gridSize.GetHeight() / 2;
+  }
 
   void Update();
 
   void GrowBody();
-  bool SnakeCell(int x, int y);
+  void Generate bool SnakeCell(int x, int y);
 
   Direction direction = Direction::kUp;
 
@@ -33,8 +36,7 @@ class Snake {
   void UpdateBody(SDL_Point &current_cell, SDL_Point &prev_cell);
 
   bool growing{false};
-  int grid_width;
-  int grid_height;
+  GameSettings *settings;
 };
 
 #endif

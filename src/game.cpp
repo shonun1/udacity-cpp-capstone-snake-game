@@ -7,13 +7,14 @@
 
 Game::Game(GameSettings *game_settings)
     : engine(dev()), settings(game_settings) {
-  GridSize gridSize = game_settings->GetGridSize();
-  snake = std::make_unique<Snake>(gridSize.getWidth(), gridSize.getHeight());
+  GridSize gridSize = game_settings->getGridSize();
+  // TODO: this is probably illegal, shared pointer needs to know about this?
+  snake = std::make_unique<Snake>(game_settings);
 
   random_w = std::uniform_int_distribution<int>(
-      0, static_cast<int>(gridSize.getWidth() - 1));
+      0, static_cast<int>(gridSize.GetWidth() - 1));
   random_h = std::uniform_int_distribution<int>(
-      0, static_cast<int>(gridSize.getHeight() - 1));
+      0, static_cast<int>(gridSize.GetHeight() - 1));
 
   std::string username;
   int past_score;
@@ -113,7 +114,7 @@ void Game::WriteScoreToFile() {
   std::ofstream scores_file;
 
   scores_file.open(Score::SCORES_FILE, std::ios_base::app);
-  scores_file << settings->GetUsername() << " " << score << std::endl;
+  scores_file << settings->getUsername() << " " << score << std::endl;
   scores_file.close();
 }
 

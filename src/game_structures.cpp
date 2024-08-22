@@ -39,12 +39,12 @@ GameSettings::GameSettings() {
   SaveToFile();
 }
 
-void GameSettings::SetUsername(std::string newUsername) {
+void GameSettings::setUsername(std::string newUsername) {
   username = newUsername;
   SaveToFile();
 }
 
-void GameSettings::SetGridSize(GridSize newSize) {
+void GameSettings::setGridSize(GridSize newSize) {
   gridSize = newSize;
   SaveToFile();
 }

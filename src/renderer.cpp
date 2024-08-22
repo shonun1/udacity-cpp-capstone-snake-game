@@ -39,9 +39,9 @@ Renderer::~Renderer() {
 
 void Renderer::Render(Snake const snake, Food const &food) {
   SDL_Rect block;
-  GridSize gridSize = settings->GetGridSize();
-  block.w = screen_width / gridSize.getWidth();
-  block.h = screen_height / gridSize.getHeight();
+  GridSize gridSize = settings->getGridSize();
+  block.w = screen_width / gridSize.GetWidth();
+  block.h = screen_height / gridSize.GetHeight();
 
   // Clear screen
   SDL_SetRenderDrawColor(sdl_renderer, 0x1E, 0x1E, 0x1E, 0xFF);
