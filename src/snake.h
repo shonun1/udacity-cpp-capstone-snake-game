@@ -1,16 +1,15 @@
 #ifndef SNAKE_H
 #define SNAKE_H
 
+#include <list>
 #include <vector>
 
 #include "SDL.h"
 #include "game_structures.h"
+#include "weapon.h"
 
 class Snake {
  public:
-  enum class Direction { kUp, kDown, kLeft, kRight };
-  enum class Weapon { Gun, FreezingGun, DisorientingGun };
-
   Snake(GameSettings *game_settings) {
     settings = game_settings;
     GridSize gridSize = settings->GetGridSize();
@@ -18,15 +17,10 @@ class Snake {
     head_y = gridSize.GetHeight() / 2;
   }
 
-  int GetAmmo() const { return ammo; }
-  Weapon GetWeapon() const { return weapon; }
-
   void Update();
   void GrowBody();
   bool SnakeCell(int x, int y);
-  void GenerateWeapon();
-  void AddAmmo(int amount);
-  void Shoot();
+  Weapon *GetWeapon() const { return weapon.get(); }
 
   Direction direction = Direction::kUp;
 
@@ -42,8 +36,7 @@ class Snake {
   void UpdateBody(SDL_Point &current_cell, SDL_Point &prev_cell);
 
   bool growing{false};
-  Weapon weapon;
-  int ammo{0};
+  std::unique_ptr<Weapon> weapon = std::make_unique<Weapon>();
   GameSettings *settings;
 };
 

@@ -9,6 +9,7 @@ void Snake::Update() {
       static_cast<int>(
           head_y)};  // We first capture the head's cell before updating.
   UpdateHead();
+  weapon->UpdateMissiles(this->settings->GetGridSize());
   SDL_Point current_cell{
       static_cast<int>(head_x),
       static_cast<int>(head_y)};  // Capture the head's cell after updating.
@@ -67,20 +68,6 @@ void Snake::UpdateBody(SDL_Point &current_head_cell,
 }
 
 void Snake::GrowBody() { growing = true; }
-
-void Snake::GenerateWeapon() {
-  if (weapon == Weapon::Gun) return;
-
-  weapon = static_cast<Weapon>(rand() % 3);
-}
-
-void Snake::AddAmmo(int amount) { ammo += amount; }
-
-void Snake::Shoot() {
-  // TODO: render missile
-  // TODO: change weapon after shooting x ammo with current weapon
-  ammo--;
-}
 
 // Inefficient method to check if cell is occupied by snake.
 bool Snake::SnakeCell(int x, int y) {

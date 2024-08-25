@@ -37,7 +37,7 @@ Renderer::~Renderer() {
   SDL_Quit();
 }
 
-void Renderer::Render(Snake const snake, Food const &food) {
+void Renderer::Render(Snake const &snake, Food const &food) {
   SDL_Rect block;
   GridSize gridSize = settings->GetGridSize();
   block.w = screen_width / gridSize.GetWidth();
@@ -72,27 +72,50 @@ void Renderer::Render(Snake const snake, Food const &food) {
   }
   SDL_RenderFillRect(sdl_renderer, &block);
 
+  // TODO: The missile gun must be saved in missile data to render correctly
+  Color missile_color;
+  switch (snake.GetWeapon()->GetType()) {
+    case Weapon::Type::FoodCatcher:
+      missile_color = Color();
+      break;
+
+    case Weapon::Type::FreezingGun:
+      missile_color = Color("ice", 0x87, 0xCE, 0xEB);
+      break;
+
+    case Weapon::Type::DisorientingGun:
+      missile_color = Color("magenta", 0xFF, 0x00, 0xFF);
+      break;
+  }
+  for (const Missile &missile : snake.GetWeapon()->GetMissiles()) {
+    block.x = static_cast<int>(missile.x_pos) * block.w;
+    block.y = static_cast<int>(missile.y_pos) * block.h;
+    SDL_SetRenderDrawColor(sdl_renderer, missile_color.R(), missile_color.G(),
+                           missile_color.B(), missile_color.A());
+    SDL_RenderFillRect(sdl_renderer, &block);
+  }
+
   // Update Screen
   SDL_RenderPresent(sdl_renderer);
 }
 
 void Renderer::UpdateWindowTitle(int score, int fps, Snake &snake) {
   std::string weapon;
-  switch (snake.GetWeapon()) {
-    case Snake::Weapon::Gun:
-      weapon = "Gun";
+  switch (snake.GetWeapon()->GetType()) {
+    case Weapon::Type::FoodCatcher:
+      weapon = "Food Catcher";
       break;
 
-    case Snake::Weapon::FreezingGun:
+    case Weapon::Type::FreezingGun:
       weapon = "Freezing Gun";
       break;
 
-    case Snake::Weapon::DisorientingGun:
+    case Weapon::Type::DisorientingGun:
       weapon = "Disorienting Gun";
       break;
   }
-  std::string title{
-      "Snake Score: " + std::to_string(score) + " FPS: " + std::to_string(fps) +
-      " Snake Weapon: " + weapon + " Ammo: " + std::to_string(snake.GetAmmo())};
+  std::string title{"Snake Score: " + std::to_string(score) + " FPS: " +
+                    std::to_string(fps) + " Snake Weapon: " + weapon +
+                    " Ammo: " + std::to_string(snake.GetWeapon()->GetAmmo())};
   SDL_SetWindowTitle(sdl_window, title.c_str());
 }

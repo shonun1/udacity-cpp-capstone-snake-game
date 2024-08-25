@@ -13,7 +13,7 @@ class Renderer {
            GameSettings *game_settings);
   ~Renderer();
 
-  void Render(Snake const snake, Food const &food);
+  void Render(Snake const &snake, Food const &food);
   void UpdateWindowTitle(int score, int fps, Snake &snake);
 
  private:

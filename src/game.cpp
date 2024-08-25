@@ -100,9 +100,19 @@ void Game::Update() {
 
   int new_x = static_cast<int>(snake->head_x);
   int new_y = static_cast<int>(snake->head_y);
+  bool any_missile_hit_food{false};
+  std::list<Missile> missiles = snake->GetWeapon()->GetMissiles();
+  for (Missile missile : missiles) {
+    int missile_x = static_cast<int>(missile.x_pos);
+    int missile_y = static_cast<int>(missile.y_pos);
+    if (missile_x == food.point.x && missile_y == food.point.y)
+      any_missile_hit_food = true;
+    if (any_missile_hit_food) break;
+  }
 
   // Check if there's food over here
-  if (food.point.x == new_x && food.point.y == new_y) {
+  if (any_missile_hit_food ||
+      (food.point.x == new_x && food.point.y == new_y)) {
     score++;
     PlaceFood();
     // Grow snake and increase speed.
@@ -110,8 +120,8 @@ void Game::Update() {
     snake->speed += 0.02;
 
     // TODO: add level multiplier
-    snake->AddAmmo(score);
-    snake->GenerateWeapon();
+    snake->GetWeapon()->AddAmmo(score);
+    snake->GetWeapon()->GenerateWeapon();
   }
 }
 

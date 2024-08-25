@@ -7,11 +7,12 @@
 
 // TODO: is there a better way to resolve circular dependency?
 enum class GameState { Running, Paused, Terminated };
+enum class Direction { kUp, kDown, kLeft, kRight };
 
 class Color {
  public:
   // Constructors
-  Color() {};
+  Color() : name("white"), r(0xFF), g(0xFF), b(0xFF), a(0xFF) {};
   Color(std::string name_, int red, int green, int blue)
       : name(name_), r(red), g(green), b(blue), a(0xFF) {};
   Color(std::string name_, int red, int green, int blue, int alpha)
