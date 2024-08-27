@@ -27,6 +27,10 @@ Game::Game(GameSettings *game_settings)
 
   scores_file.close();
   PlaceFood();
+
+  menu.AddMenuItem("Continue", [this]() { ContinueGame(); });
+  menu.AddMenuItem("Grid Size", [this]() { settings->SelectNextGridSize(); });
+  menu.AddMenuItem("Quit", [this]() { QuitGame(); });
 }
 
 void Game::Run(Controller const &controller, Renderer &renderer,
@@ -42,9 +46,9 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     frame_start = SDL_GetTicks();
 
     // Input, Update, Render - the main game loop.
-    controller.HandleInput(state, *snake);
+    controller.HandleInput(state, *snake, menu);
     Update();
-    renderer.Render(*snake, food);
+    renderer.Render(*snake, food, state, menu);
 
     frame_end = SDL_GetTicks();
 

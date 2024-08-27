@@ -49,6 +49,17 @@ void GameSettings::SetGridSize(GridSize newSize) {
   SaveToFile();
 }
 
+void GameSettings::SelectNextGridSize() {
+  // ! tutaj jakis bug jest, pozniej zostaja 2 rozmiary, a nie 3
+
+  // jedzenie moze sie pojawic poza gridem jak sie zmieni na mniejszy, odswiezyc
+  // jedzenie jak jest poza mapa
+  int curr_size = static_cast<int>(gridSize.GetSize());
+  gridSize =
+      GridSize::GRID_SIZES[(curr_size + 1) % GridSize::GRID_SIZES.size()];
+  SaveToFile();
+}
+
 void GameSettings::SaveToFile() {
   std::ofstream settings_file;
   settings_file.open(GameSettings::SETTINGS_FILE, std::ios::trunc);

@@ -1,6 +1,7 @@
 #ifndef GAME_STRUCTURES_H
 #define GAME_STRUCTURES_H
 
+#include <functional>
 #include <vector>
 
 #include "SDL.h"
@@ -53,6 +54,9 @@ class GridSize {
   GridSize(Options option);
   GridSize(int width_, int height_) : width(width_), height(height_) {};
 
+  // ! tu copy constructor, zeby do game settings mozna bylo przypisac nowy
+  // GridSize niezalezny
+
   GridSize::Options GetSize() const { return size; }
   int GetWidth() const { return width; }
   int GetHeight() const { return height; }
@@ -74,14 +78,40 @@ class GameSettings {
   GridSize GetGridSize() const { return gridSize; };
   void SetUsername(std::string newUsername);
   void SetGridSize(GridSize newSize);
-
-  static const std::vector<GridSize> GRID_SIZE_OPTIONS;
+  void SelectNextGridSize();
 
  private:
   std::string username{"user"};
   GridSize gridSize;
 
   void SaveToFile();
+};
+
+class Menu {
+ public:
+  std::vector<std::string> GetItems() const { return items; }
+  int GetSelectedItem() const { return selectedItem; }
+
+  void AddMenuItem(const std::string& item, std::function<void()> action) {
+    items.push_back(item);
+    actions.push_back(action);
+  }
+
+  void ExecuteSelectedItemAction() const {
+    if (selectedItem >= 0 && selectedItem < actions.size()) {
+      actions[selectedItem]();
+    }
+  }
+
+  void SelectPreviousItem() {
+    selectedItem = (selectedItem - 1) % items.size();
+  }
+  void SelectNextItem() { selectedItem = (selectedItem + 1) % items.size(); }
+
+ private:
+  std::vector<std::string> items;
+  std::vector<std::function<void()>> actions;
+  int selectedItem{0};
 };
 
 #endif

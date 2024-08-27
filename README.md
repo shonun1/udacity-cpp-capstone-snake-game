@@ -30,6 +30,9 @@ In this project, you can build your own C++ application or extend this Snake gam
 3. Compile: `cmake .. && make`
 4. Run it: `./SnakeGame`.
 
+## Font attribution
+
+The font Jersey 10 used in the project was designed by Sarah Cadigan-Fried and published under the OFL license. Please refer to the Google Fonts page for more information: https://fonts.google.com/specimen/Jersey+10/about
 
 ## CC Attribution-ShareAlike 4.0 International
 
