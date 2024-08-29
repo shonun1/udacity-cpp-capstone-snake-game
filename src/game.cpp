@@ -27,6 +27,10 @@ Game::Game(GameSettings *game_settings)
 
   scores_file.close();
   PlaceFood();
+
+  menu.AddMenuItem("Continue", [this]() { ContinueGame(); });
+  menu.AddMenuItem("Grid Size", [this]() { SelectNextGridSize(); });
+  menu.AddMenuItem("Quit", [this]() { QuitGame(); });
 }
 
 void Game::Run(Controller const &controller, Renderer &renderer,
@@ -42,9 +46,9 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     frame_start = SDL_GetTicks();
 
     // Input, Update, Render - the main game loop.
-    controller.HandleInput(state, *snake);
+    controller.HandleInput(state, *snake, menu);
     Update();
-    renderer.Render(*snake, food);
+    renderer.Render(*snake, food, state, menu);
 
     frame_end = SDL_GetTicks();
 
@@ -135,3 +139,16 @@ void Game::WriteScoreToFile() {
 
 int Game::GetScore() const { return score; }
 int Game::GetSize() const { return snake->size; }
+
+void Game::SelectNextGridSize() {
+  settings->SelectNextGridSize();
+  GridSize gridSize = settings->GetGridSize();
+  random_w = std::uniform_int_distribution<int>(
+      0, static_cast<int>(gridSize.GetWidth() - 1));
+  random_h = std::uniform_int_distribution<int>(
+      0, static_cast<int>(gridSize.GetHeight() - 1));
+  if (food.point.x > gridSize.GetWidth() ||
+      food.point.y > gridSize.GetHeight()) {
+    PlaceFood();
+  }
+}

@@ -3,6 +3,19 @@
 #include <iostream>
 #include <string>
 
+const SDL_Color SDL_WHITE{0xFF, 0xFF, 0xFF, 0xFF};
+const SDL_Color SDL_RED{0xFF, 0x00, 0x00, 0xFF};
+const char *Renderer::FONT_PATH{"../game_config/Jersey10-Regular.ttf"};
+const int Renderer::FONT_SIZE{30};
+TTF_Font *Renderer::FONT = nullptr;
+
+void Renderer::Initialize() {
+  Renderer::FONT = TTF_OpenFont(Renderer::FONT_PATH, Renderer::FONT_SIZE);
+  if (!Renderer::FONT) {
+    std::cerr << "Failed to load font: " << TTF_GetError() << std::endl;
+  }
+}
+
 Renderer::Renderer(const std::size_t screen_width,
                    const std::size_t screen_height, GameSettings *game_settings)
     : screen_width(screen_width),
@@ -30,14 +43,24 @@ Renderer::Renderer(const std::size_t screen_width,
     std::cerr << "Renderer could not be created.\n";
     std::cerr << "SDL_Error: " << SDL_GetError() << "\n";
   }
+
+  // Initialize TTF
+  if (TTF_Init() < 0) {
+    std::cerr << "TTF could not initialize.\n";
+    std::cerr << "TTF_Error: " << TTF_GetError() << "\n";
+  }
+
+  Renderer::Initialize();
 }
 
 Renderer::~Renderer() {
+  TTF_Quit();
   SDL_DestroyWindow(sdl_window);
   SDL_Quit();
 }
 
-void Renderer::Render(Snake const &snake, Food const &food) {
+void Renderer::Render(Snake const &snake, Food const &food, GameState state,
+                      const Menu &menu) {
   SDL_Rect block;
   GridSize gridSize = settings->GetGridSize();
   block.w = screen_width / gridSize.GetWidth();
@@ -93,6 +116,52 @@ void Renderer::Render(Snake const &snake, Food const &food) {
     SDL_SetRenderDrawColor(sdl_renderer, missile_color.R(), missile_color.G(),
                            missile_color.B(), missile_color.A());
     SDL_RenderFillRect(sdl_renderer, &block);
+  }
+
+  if (state == GameState::Paused) {
+    std::vector<std::string> menu_items = menu.GetItems();
+    std::vector<SDL_Texture *> menu_textures;
+    std::vector<SDL_Rect> menu_rects;
+    int highlighted_item = menu.GetSelectedItem();
+
+    for (size_t i = 0; i < menu_items.size(); ++i) {
+      bool is_selected = i == highlighted_item;
+      std::string selected_prefix = is_selected ? "> " : "";
+      std::string item_text = selected_prefix + menu_items[i];
+      SDL_Surface *text_surface = TTF_RenderText_Solid(
+          FONT, item_text.c_str(), is_selected ? SDL_RED : SDL_WHITE);
+      if (!text_surface) {
+        std::cerr << "Failed to render text surface: " << TTF_GetError()
+                  << std::endl;
+        continue;
+      }
+
+      SDL_Texture *texture =
+          SDL_CreateTextureFromSurface(sdl_renderer, text_surface);
+      SDL_FreeSurface(text_surface);
+      if (!texture) {
+        std::cerr << "Failed to create texture from surface: " << SDL_GetError()
+                  << std::endl;
+        continue;
+      }
+
+      SDL_Rect rect;
+      rect.w = 200;
+      rect.h = 50;
+      rect.x = screen_width / 2 - rect.w / 2;
+      rect.y = 200 + i * 50;
+
+      menu_textures.push_back(texture);
+      menu_rects.push_back(rect);
+    }
+
+    for (size_t i = 0; i < menu_textures.size(); ++i) {
+      if (SDL_RenderCopy(sdl_renderer, menu_textures[i], NULL,
+                         &menu_rects[i]) != 0) {
+        std::cerr << "Failed to render texture: " << SDL_GetError()
+                  << std::endl;
+      }
+    }
   }
 
   // Update Screen

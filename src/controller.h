@@ -6,7 +6,7 @@
 
 class Controller {
  public:
-  void HandleInput(GameState &state, Snake &snake) const;
+  void HandleInput(GameState &state, Snake &snake, Menu &menu) const;
 
  private:
   void ChangeDirection(Snake &snake, Direction input, Direction opposite) const;

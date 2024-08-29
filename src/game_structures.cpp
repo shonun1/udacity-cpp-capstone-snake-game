@@ -13,7 +13,8 @@ const std::vector<Color> Color::COLOR_OPTIONS{
     Color("white", 0xFF, 0xFF, 0xFF)};
 
 const std::vector<GridSize> GridSize::GRID_SIZES{
-    GridSize(32, 32), GridSize(48, 48), GridSize(64, 64)};
+    GridSize(GridSize::Options::Small), GridSize(GridSize::Options::Medium),
+    GridSize(GridSize::Options::Large)};
 
 GameSettings::GameSettings() {
   std::ifstream settings_file;
@@ -49,6 +50,13 @@ void GameSettings::SetGridSize(GridSize newSize) {
   SaveToFile();
 }
 
+void GameSettings::SelectNextGridSize() {
+  int curr_size = static_cast<int>(gridSize.GetSize());
+  gridSize =
+      GridSize::GRID_SIZES[(curr_size + 1) % GridSize::GRID_SIZES.size()];
+  SaveToFile();
+}
+
 void GameSettings::SaveToFile() {
   std::ofstream settings_file;
   settings_file.open(GameSettings::SETTINGS_FILE, std::ios::trunc);
@@ -61,14 +69,26 @@ void GameSettings::SaveToFile() {
 
 GridSize::GridSize() {
   size = GridSize::Options::Small;
-  const GridSize& sizeData = GRID_SIZES[static_cast<int>(size)];
-  width = sizeData.width;
-  height = sizeData.height;
+  width = 32;
+  height = 32;
 }
 
 GridSize::GridSize(Options option) {
   size = option;
-  const GridSize& sizeData = GRID_SIZES[static_cast<int>(option)];
-  width = sizeData.width;
-  height = sizeData.height;
+  int side_length;
+  switch (option) {
+    case GridSize::Options::Small:
+      side_length = 32;
+      break;
+
+    case GridSize::Options::Medium:
+      side_length = 48;
+      break;
+
+    case GridSize::Options::Large:
+      side_length = 64;
+      break;
+  }
+  width = side_length;
+  height = side_length;
 }

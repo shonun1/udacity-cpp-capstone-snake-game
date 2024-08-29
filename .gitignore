@@ -2,3 +2,4 @@
 build/**
 .vscode/**
 game_config/**
+!game_config/Jersey10-Regular.ttf

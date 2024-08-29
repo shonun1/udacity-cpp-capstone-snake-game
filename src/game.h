@@ -18,12 +18,17 @@ class Game {
   int GetScore() const;
   int GetSize() const;
 
+  void ContinueGame() { state = GameState::Running; }
+  void QuitGame() { state = GameState::Terminated; }
+  void SelectNextGridSize();
+
  private:
   GameState state;
   std::unique_ptr<Snake> snake;
   Food food;
   std::vector<Score> past_scores;
   GameSettings *settings;
+  Menu menu;
 
   std::random_device dev;
   std::mt19937 engine;
