@@ -2,6 +2,7 @@
 #define SNAKE_H
 
 #include <list>
+#include <memory>
 #include <vector>
 
 #include "SDL.h"
