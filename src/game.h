@@ -13,7 +13,7 @@
 class Game {
  public:
   // Constructor
-  Game(GameSettings *game_settings);
+  Game(std::shared_ptr<GameSettings> game_settings);
 
   // Getters
   int GetScore() const;
@@ -36,7 +36,7 @@ class Game {
   std::unique_ptr<Snake> snake;
   Food food;
   std::vector<Score> past_scores;
-  GameSettings *settings;
+  std::shared_ptr<GameSettings> settings;
   Menu menu;
 
   std::random_device dev;

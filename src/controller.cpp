@@ -48,7 +48,6 @@ void Controller::HandleInput(GameState &state, Snake &snake, Menu &menu) const {
           if (state == GameState::Paused) {
             state = GameState::Running;
           } else {
-            // TODO: consider game restarting might be implemented in the future
             state = GameState::Paused;
           }
           break;

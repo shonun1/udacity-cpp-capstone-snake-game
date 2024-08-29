@@ -5,7 +5,7 @@
 
 #include "SDL.h"
 
-Game::Game(GameSettings *game_settings)
+Game::Game(std::shared_ptr<GameSettings> game_settings)
     : engine(dev()), settings(game_settings) {
   GridSize gridSize = game_settings->GetGridSize();
   // Game class owns the Snake class instance
@@ -42,6 +42,8 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   Uint32 frame_end;
   Uint32 frame_duration;
   int frame_count = 0;
+  int title_updates_count = 0;
+  int last_fps = 0;
   state = GameState::Running;
 
   while (state != GameState::Terminated) {
@@ -61,9 +63,12 @@ void Game::Run(Controller const &controller, Renderer &renderer,
 
     // After every second, update the window title.
     if (frame_end - title_timestamp >= 100) {
-      // TODO: fps updated once every 10 updates
-      renderer.UpdateWindowTitle(score, frame_count * 10, *snake);
-      frame_count = 0;
+      title_updates_count++;
+      if (title_updates_count % 10 == 0) {
+        last_fps = frame_count;
+        frame_count = 0;
+      }
+      renderer.UpdateWindowTitle(score, last_fps, *snake);
       title_timestamp = frame_end;
     }
 
@@ -125,7 +130,6 @@ void Game::Update() {
     snake->GrowBody();
     snake->speed += 0.02;
 
-    // TODO: add level multiplier
     snake->GetWeapon()->AddAmmo(score);
     snake->GetWeapon()->GenerateWeapon();
   }

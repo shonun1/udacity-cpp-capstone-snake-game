@@ -19,10 +19,9 @@ int main() {
 
   // Instantiate a shared settings class
   std::shared_ptr<GameSettings> settings = settings_future.get();
-  // TODO: should i be passing shared pointers or raw pointers?
-  Renderer renderer(kScreenWidth, kScreenHeight, settings.get());
+  Renderer renderer(kScreenWidth, kScreenHeight, settings);
   Controller controller;
-  Game game(settings.get());
+  Game game(settings);
   game.Run(controller, renderer, kMsPerFrame);
   std::cout << "Game has terminated successfully!\n";
   std::cout << "Score: " << game.GetScore() << "\n";

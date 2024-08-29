@@ -12,7 +12,7 @@ class Renderer {
  public:
   // Constructor / Destructor
   Renderer(const std::size_t screen_width, const std::size_t screen_height,
-           GameSettings *game_settings);
+           std::shared_ptr<GameSettings> game_settings);
   ~Renderer();
 
   // Class methods
@@ -30,7 +30,7 @@ class Renderer {
   SDL_Window *sdl_window;
   SDL_Renderer *sdl_renderer;
 
-  GameSettings *settings;
+  std::shared_ptr<GameSettings> settings;
 
   const std::size_t screen_width;
   const std::size_t screen_height;

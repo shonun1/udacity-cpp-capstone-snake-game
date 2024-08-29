@@ -18,7 +18,8 @@ void Renderer::InitializeFont() {
 }
 
 Renderer::Renderer(const std::size_t screen_width,
-                   const std::size_t screen_height, GameSettings *game_settings)
+                   const std::size_t screen_height,
+                   std::shared_ptr<GameSettings> game_settings)
     : screen_width(screen_width),
       screen_height(screen_height),
       settings(game_settings) {
@@ -96,7 +97,6 @@ void Renderer::Render(Snake const &snake, Food const &food, GameState state,
   }
   SDL_RenderFillRect(sdl_renderer, &block);
 
-  // TODO: The missile gun must be saved in missile data to render correctly
   // Render missiles
   Color missile_color;
   switch (snake.GetWeapon()->GetType()) {

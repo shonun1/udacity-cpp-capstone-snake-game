@@ -11,7 +11,7 @@
 class Snake {
  public:
   // Constructor
-  Snake(GameSettings *game_settings) : settings(game_settings) {
+  Snake(std::shared_ptr<GameSettings> game_settings) : settings(game_settings) {
     GridSize gridSize = settings->GetGridSize();
     head_x = gridSize.GetWidth() / 2;
     head_y = gridSize.GetHeight() / 2;
@@ -41,7 +41,7 @@ class Snake {
 
   bool growing{false};
   std::unique_ptr<Weapon> weapon = std::make_unique<Weapon>();
-  GameSettings *settings;
+  std::shared_ptr<GameSettings> settings;
 };
 
 #endif
