@@ -23,7 +23,7 @@ In this project, you can build your own C++ application or extend this Snake gam
   * All installation instructions can be found [here](https://wiki.libsdl.org/Installation)
   >Note that for Linux, an `apt` or `apt-get` installation is preferred to building from source.
 * SDL2_ttf >= 2.22.0
-  * Details on how to install SDL2_ttf can be found [here](https://wiki.libsdl.org/SDL2_ttf)
+  * Details on how to install SDL2_ttf can be found [here](https://wiki.libsdl.org/SDL2_ttf) (libsdl2-ttf-dev on Ubuntu)
 * gcc/g++ >= 5.4
   * Linux: gcc / g++ is installed by default on most Linux distros
   * Mac: same deal as make - [install Xcode command line tools](https://developer.apple.com/xcode/features/)
@@ -69,6 +69,8 @@ I honestly see a lot of potential for so many more features that would be intere
 ## Rubric points
 
 **Please note that all the file line references were created at the git ref 9550ac5e3596d64e15ff113d460a172409d35bb3. Please refer to [this branch](https://github.com/shonun1/udacity-cpp-capstone-snake-game/tree/9550ac5e3596d64e15ff113d460a172409d35bb3) for accurate line references.**
+
+The main fix afterwards was related to [correct usage of shared pointer](https://github.com/shonun1/udacity-cpp-capstone-snake-game/commit/ca27ee99f3d1cddefe86a42c1a59fe7258581402) and [Ubuntu compilation error fixes](https://github.com/shonun1/udacity-cpp-capstone-snake-game/commit/37b740295026e05dec16936fb8b9631ecff4794b), since I was developing the project locally.
 
 1. README - all points satisfied with the current README file.
 2. Compilaition - the code compiles and runs without errors. Stuck with make, with only slight improvement with the top level `Makefile`.
