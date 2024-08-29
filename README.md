@@ -68,6 +68,8 @@ I honestly see a lot of potential for so many more features that would be intere
 
 ## Rubric points
 
+**Please note that all the file line references were created at the git ref 9550ac5e3596d64e15ff113d460a172409d35bb3. Please refer to [this branch](https://github.com/shonun1/udacity-cpp-capstone-snake-game/tree/9550ac5e3596d64e15ff113d460a172409d35bb3) for accurate line references.**
+
 1. README - all points satisfied with the current README file.
 2. Compilaition - the code compiles and runs without errors. Stuck with make, with only slight improvement with the top level `Makefile`.
 3. Loops, Functions, I/O:
