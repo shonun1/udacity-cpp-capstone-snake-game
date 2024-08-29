@@ -6,7 +6,6 @@
 
 #include "SDL.h"
 
-// TODO: is there a better way to resolve circular dependency?
 enum class GameState { Running, Paused, Terminated };
 enum class Direction { kUp, kDown, kLeft, kRight };
 
@@ -19,6 +18,7 @@ class Color {
   Color(std::string name_, int red, int green, int blue, int alpha)
       : name(name_), r(red), g(green), b(blue), a(alpha) {};
 
+  // Getters
   std::string Name() const { return name; }
   int R() const { return r; }
   int G() const { return g; }
@@ -50,9 +50,12 @@ struct Score {
 class GridSize {
  public:
   enum class Options { Small, Medium, Large };
+
+  // Constructors
   GridSize();
   GridSize(Options option);
 
+  // Getters
   GridSize::Options GetSize() const { return size; }
   int GetWidth() const { return width; }
   int GetHeight() const { return height; }
@@ -68,8 +71,10 @@ class GameSettings {
  public:
   static const std::string SETTINGS_FILE;
 
+  // Constructor
   GameSettings();
 
+  // Getters / Setters
   std::string GetUsername() const { return username; };
   GridSize GetGridSize() const { return gridSize; };
   void SetUsername(std::string newUsername);
@@ -85,9 +90,11 @@ class GameSettings {
 
 class Menu {
  public:
+  // Getters
   std::vector<std::string> GetItems() const { return items; }
   int GetSelectedItem() const { return selectedItem; }
 
+  // Class methods
   void AddMenuItem(const std::string& item, std::function<void()> action) {
     items.push_back(item);
     actions.push_back(action);

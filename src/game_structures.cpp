@@ -3,6 +3,7 @@
 #include <fstream>
 #include <unordered_map>
 
+// Static variables value assignment
 const std::string Score::SCORES_FILE = "../game_config/scores.txt";
 const std::string GameSettings::SETTINGS_FILE = "../game_config/settings.txt";
 
@@ -21,12 +22,14 @@ GameSettings::GameSettings() {
   std::string key, value;
   settings_file.open(GameSettings::SETTINGS_FILE);
 
+  // Read the settings file into a local map
   std::unordered_map<std::string, std::string> settings_map;
   while (settings_file >> key >> value) {
     settings_map[key] = value;
   }
   settings_file.close();
 
+  // Map the values onto GameSettings class members
   if (settings_map.count("username") > 0) username = settings_map["username"];
   if (settings_map.count("gridSize") > 0) {
     int gridSizeInt = std::stoi(settings_map["gridSize"]);
@@ -73,8 +76,7 @@ GridSize::GridSize() {
   height = 32;
 }
 
-GridSize::GridSize(Options option) {
-  size = option;
+GridSize::GridSize(Options option) : size(option) {
   int side_length;
   switch (option) {
     case GridSize::Options::Small:

@@ -3,13 +3,14 @@
 #include <iostream>
 #include <string>
 
+// Static variables value assignment
 const SDL_Color SDL_WHITE{0xFF, 0xFF, 0xFF, 0xFF};
 const SDL_Color SDL_RED{0xFF, 0x00, 0x00, 0xFF};
 const char *Renderer::FONT_PATH{"../game_config/Jersey10-Regular.ttf"};
 const int Renderer::FONT_SIZE{30};
 TTF_Font *Renderer::FONT = nullptr;
 
-void Renderer::Initialize() {
+void Renderer::InitializeFont() {
   Renderer::FONT = TTF_OpenFont(Renderer::FONT_PATH, Renderer::FONT_SIZE);
   if (!Renderer::FONT) {
     std::cerr << "Failed to load font: " << TTF_GetError() << std::endl;
@@ -50,7 +51,7 @@ Renderer::Renderer(const std::size_t screen_width,
     std::cerr << "TTF_Error: " << TTF_GetError() << "\n";
   }
 
-  Renderer::Initialize();
+  Renderer::InitializeFont();
 }
 
 Renderer::~Renderer() {
@@ -96,6 +97,7 @@ void Renderer::Render(Snake const &snake, Food const &food, GameState state,
   SDL_RenderFillRect(sdl_renderer, &block);
 
   // TODO: The missile gun must be saved in missile data to render correctly
+  // Render missiles
   Color missile_color;
   switch (snake.GetWeapon()->GetType()) {
     case Weapon::Type::FoodCatcher:
@@ -118,6 +120,7 @@ void Renderer::Render(Snake const &snake, Food const &food, GameState state,
     SDL_RenderFillRect(sdl_renderer, &block);
   }
 
+  // Render menu
   if (state == GameState::Paused) {
     std::vector<std::string> menu_items = menu.GetItems();
     std::vector<SDL_Texture *> menu_textures;
@@ -169,6 +172,7 @@ void Renderer::Render(Snake const &snake, Food const &food, GameState state,
 }
 
 void Renderer::UpdateWindowTitle(int score, int fps, Snake &snake) {
+  // Collect weapon information
   std::string weapon;
   switch (snake.GetWeapon()->GetType()) {
     case Weapon::Type::FoodCatcher:

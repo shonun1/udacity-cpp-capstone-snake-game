@@ -8,7 +8,7 @@
 Game::Game(GameSettings *game_settings)
     : engine(dev()), settings(game_settings) {
   GridSize gridSize = game_settings->GetGridSize();
-  // TODO: this is probably illegal, shared pointer needs to know about this?
+  // Game class owns the Snake class instance
   snake = std::make_unique<Snake>(game_settings);
 
   random_w = std::uniform_int_distribution<int>(
@@ -16,6 +16,7 @@ Game::Game(GameSettings *game_settings)
   random_h = std::uniform_int_distribution<int>(
       0, static_cast<int>(gridSize.GetHeight() - 1));
 
+  // Read the scores from file into the class member
   std::string username;
   int past_score;
   std::ifstream scores_file;
@@ -24,10 +25,11 @@ Game::Game(GameSettings *game_settings)
   while (scores_file >> username >> past_score) {
     past_scores.emplace_back(username, past_score);
   }
-
   scores_file.close();
+
   PlaceFood();
 
+  // Add menu items and their actions
   menu.AddMenuItem("Continue", [this]() { ContinueGame(); });
   menu.AddMenuItem("Grid Size", [this]() { SelectNextGridSize(); });
   menu.AddMenuItem("Quit", [this]() { QuitGame(); });
@@ -142,11 +144,15 @@ int Game::GetSize() const { return snake->size; }
 
 void Game::SelectNextGridSize() {
   settings->SelectNextGridSize();
+
+  // Update the class members to correctly reflect on the grid size change
   GridSize gridSize = settings->GetGridSize();
   random_w = std::uniform_int_distribution<int>(
       0, static_cast<int>(gridSize.GetWidth() - 1));
   random_h = std::uniform_int_distribution<int>(
       0, static_cast<int>(gridSize.GetHeight() - 1));
+
+  // Place new food if the food turns out to be out of bounds
   if (food.point.x > gridSize.GetWidth() ||
       food.point.y > gridSize.GetHeight()) {
     PlaceFood();

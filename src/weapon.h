@@ -10,11 +10,13 @@ class Weapon {
  public:
   enum class Type { FoodCatcher, FreezingGun, DisorientingGun };
 
+  // Getters
   int GetAmmo() const { return ammo; }
   int GetConsecutiveShots() const { return consecutive_shots; }
   Weapon::Type GetType() const { return type; }
   std::list<Missile> GetMissiles() const { return missiles; }
 
+  // Class methods
   void GenerateWeapon();
   void AddAmmo(int amount);
   void Shoot(float x, float y, float speed, Direction dir);

@@ -4,9 +4,11 @@
 #include "game_structures.h"
 
 struct Missile {
+  // Constructor
   Missile(float x, float y, float mis_speed, Direction dir)
       : x_pos(x), y_pos(y), speed(mis_speed), direction(dir) {};
 
+  // Methods
   void UpdatePosition();
   bool HasHitWall(const GridSize &gridSize);
 
