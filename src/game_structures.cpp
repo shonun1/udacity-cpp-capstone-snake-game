@@ -1,6 +1,7 @@
 #include "game_structures.h"
 
 #include <fstream>
+#include <iostream>
 #include <unordered_map>
 
 // Static variables value assignment
@@ -43,6 +44,11 @@ GameSettings::GameSettings() {
   SaveToFile();
 }
 
+GameSettings::~GameSettings() {
+  // Ensure all asyncronous operations have finished before destruction
+  for (auto &future : asyncOperations) future.get();
+}
+
 void GameSettings::SetUsername(std::string newUsername) {
   username = newUsername;
   SaveToFile();
@@ -61,13 +67,27 @@ void GameSettings::SelectNextGridSize() {
 }
 
 void GameSettings::SaveToFile() {
-  std::ofstream settings_file;
-  settings_file.open(GameSettings::SETTINGS_FILE, std::ios::trunc);
-  settings_file << "username" << " " << username << std::endl;
-  settings_file << "gridSize" << " " << static_cast<int>(gridSize.GetSize())
+  // Launch the file saving operation asyncronously
+  auto operation = std::async(std::launch::async, [this]() {
+    // Ensure no other thread is attempting to write to the settings file at the
+    // same time
+    std::lock_guard<std::mutex> lock(this->settingsFileMutex);
+    std::ofstream settings_file;
+    settings_file.open(GameSettings::SETTINGS_FILE, std::ios::trunc);
+    if (settings_file.is_open()) {
+      settings_file << "username" << " " << username << std::endl;
+      settings_file << "gridSize" << " " << static_cast<int>(gridSize.GetSize())
+                    << std::endl;
+      settings_file.close();
+    } else {
+      std::cerr << "Unable to open file: " << GameSettings::SETTINGS_FILE
                 << std::endl;
+    }
+  });
 
-  settings_file.close();
+  // Store the futures to later ensure all worker threads are finished before
+  // destroying the class instance
+  asyncOperations.push_back(std::move(operation));
 }
 
 GridSize::GridSize() {

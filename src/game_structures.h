@@ -2,6 +2,8 @@
 #define GAME_STRUCTURES_H
 
 #include <functional>
+#include <future>
+#include <mutex>
 #include <vector>
 
 #include "SDL.h"
@@ -35,6 +37,7 @@ class Color {
 struct Food {
   SDL_Point point;
   Color color;
+  bool is_toxic;
 };
 
 struct Score {
@@ -71,8 +74,9 @@ class GameSettings {
  public:
   static const std::string SETTINGS_FILE;
 
-  // Constructor
+  // Constructor / Destructor
   GameSettings();
+  ~GameSettings();
 
   // Getters / Setters
   std::string GetUsername() const { return username; };
@@ -84,6 +88,8 @@ class GameSettings {
  private:
   std::string username{"user"};
   GridSize gridSize;
+  std::mutex settingsFileMutex;
+  std::vector<std::future<void>> asyncOperations;
 
   void SaveToFile();
 };

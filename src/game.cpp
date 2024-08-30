@@ -1,5 +1,6 @@
 #include "game.h"
 
+#include <chrono>
 #include <fstream>
 #include <iostream>
 
@@ -93,6 +94,8 @@ void Game::PlaceFood() {
       food.point.y = y;
       int colorIdx = random_color(engine) % Color::COLOR_OPTIONS.size();
       food.color = Color::COLOR_OPTIONS[colorIdx];
+      std::lock_guard<std::mutex> lock(mutex);
+      food.is_toxic = colorIdx % 3 == 0 && allow_toxic_food;
 
       return;
     }
@@ -125,11 +128,24 @@ void Game::Update() {
   if (any_missile_hit_food ||
       (food.point.x == new_x && food.point.y == new_y)) {
     score++;
-    PlaceFood();
-    // Grow snake and increase speed.
-    snake->GrowBody();
-    snake->speed += 0.02;
 
+    if (food.is_toxic) {
+      // Temporarily slow down the snake if the food was toxic
+      last_slowdown = snake->speed / 2.f;
+      std::unique_lock<std::mutex> lock(mutex);
+      snake->speed -= last_slowdown;
+      allow_toxic_food = false;
+      lock.unlock();
+      slowdown_thread = std::thread(&Game::SlowdownTimer, this);
+      slowdown_thread.detach();
+    } else {
+      // Grow snake and increase speed
+      snake->GrowBody();
+      std::lock_guard<std::mutex> lock(mutex);
+      snake->speed += 0.02;
+    }
+
+    PlaceFood();
     snake->GetWeapon()->AddAmmo(score);
     snake->GetWeapon()->GenerateWeapon();
   }
@@ -141,6 +157,26 @@ void Game::WriteScoreToFile() {
   scores_file.open(Score::SCORES_FILE, std::ios_base::app);
   scores_file << settings->GetUsername() << " " << score << std::endl;
   scores_file.close();
+}
+
+void Game::SlowdownTimer() {
+  const int slowdownSeconds = 5;
+  auto elapsedMs = std::chrono::milliseconds(0);
+  auto lastLoopTime = std::chrono::high_resolution_clock::now();
+  while (std::chrono::duration_cast<std::chrono::seconds>(elapsedMs).count() <
+         slowdownSeconds) {
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    auto msSinceLastLoop =
+        std::chrono::duration_cast<std::chrono::milliseconds>(currentTime -
+                                                              lastLoopTime);
+    lastLoopTime = currentTime;
+    if (state == GameState::Running) elapsedMs += msSinceLastLoop;
+    std::this_thread::sleep_for(std::chrono::milliseconds(900));
+  }
+
+  std::lock_guard<std::mutex> lock(mutex);
+  allow_toxic_food = true;
+  snake->speed += last_slowdown;
 }
 
 int Game::GetScore() const { return score; }

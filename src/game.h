@@ -1,7 +1,9 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <mutex>
 #include <random>
+#include <thread>
 #include <vector>
 
 #include "SDL.h"
@@ -31,13 +33,18 @@ class Game {
   void PlaceFood();
   void Update();
   void WriteScoreToFile();
+  void SlowdownTimer();
 
   GameState state;
   std::unique_ptr<Snake> snake;
+  std::thread slowdown_thread;
   Food food;
+  bool allow_toxic_food{true};
+  float last_slowdown;
   std::vector<Score> past_scores;
   std::shared_ptr<GameSettings> settings;
   Menu menu;
+  std::mutex mutex;
 
   std::random_device dev;
   std::mt19937 engine;
