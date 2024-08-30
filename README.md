@@ -63,6 +63,7 @@ The following features were added to the original code:
   * Continue - Continue the game.
   * Grid Size - Change the grid size, which toggles the size between three options: 32x32, 48x48 and 64x64. The game continues after the grid size is changed, food might get placed in a different location if it was out of the new grid size bounds.
   * Exit - Exit the game.
+* Food is rendered with a random color each time it is placed on the grid. Additionally, some of the food is toxic, which is also random, but somewhat consistent with the color as when the generated random color number is divisible by 3 and a toxic food can be spawned at that time, the food will be toxic. Toxic food slows down the snake for around 5 seconds.
 
 I honestly see a lot of potential for so many more features that would be interesting to implement that unfortunately I was unable to do due to time constraints. I will probably end up implementing them in the future, but this finalizes my submission for the project.
 
@@ -105,10 +106,9 @@ The main fix afterwards was related to [correct usage of shared pointer](https:/
 
 6. Concurrency:
 
-* The project uses multithreading.
-  * At the classes initialization phase in main.cpp the GameSettings shared pointer is instantiated asynchonously. I am aware that spawning a new thread for this is not necessary and is probably slower than simply running the code synchronously, but I planned the use of concurrency so late into the project, that other parts of the project were already too tightly coupled to the main thread and would require a lot of refactoring to make use of multiple threads - `main.cpp:13-21`
-* A promise and future is used in the project.
-  * The GameSettings shared pointer is instantiated using a promise and future - `main.cpp:13-21`
+**Note: After receiving submission feedback I have implemented completely different concurrency features than the ones I initially had. Please review the concurrency features, that were commited [here](https://github.com/shonun1/udacity-cpp-capstone-snake-game/commit/bff888313a597a77f8bcbbc653630dd45586d3de).**
+
+* As can be seen in the commit, the project uses a separate thread that is launched when the snake eats toxic food. The thread is responsible for slowing down the snake for a certain amount of time. Additionally saving the settings to a file was modified to use async execution. Using concurrency required using mutexes and locks across the project, which can be seen in the commit. This satisfies the concurrency rubric points about multithreading and locking.
 
 ## CC Attribution-ShareAlike 4.0 International
 
